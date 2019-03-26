@@ -1,0 +1,101 @@
+#include "out.ceu"
+#include "wclock.ceu"
+
+var int i = 0;
+var int j = 0;
+var[4] bool state = [false,false,false,false]; // 13,12,11,10
+var bool flag = false;
+
+output bool OUT_10;
+output bool OUT_11;
+output bool OUT_12;
+output bool OUT_13;
+
+emit OUT_13(low);
+emit OUT_12(low);
+emit OUT_11(low);
+emit OUT_10(low);
+await 10ms;
+
+output bool OUT_9;
+output bool OUT_8;
+output bool OUT_7;
+output bool OUT_6;
+
+emit OUT_9(low);
+emit OUT_8(low);
+emit OUT_7(low);
+emit OUT_6(low);
+await 10ms;
+
+loop do
+    if _digitalRead(2) then
+
+        i = i + 1;
+
+        if i==10 then
+            i = 0;
+            flag = true;
+        end
+
+        if flag then
+            j = j + 1;
+            if j==10 then
+                j = 0;
+                flag = false;
+            end
+        end
+
+        var int l = i;
+        var int k;
+        loop k in [0->3] do
+            if l%2==0 then
+                state[k] = true;
+            else
+                state[k] = false;
+            end
+            l = l/2;
+        end
+
+        if i==0 then
+            emit OUT_13(low);
+            emit OUT_12(low);
+            emit OUT_11(low);
+            emit OUT_10(low);
+            await 100ms;
+        else
+            emit OUT_13(state[3]);
+            emit OUT_12(state[2]);
+            emit OUT_11(state[1]);
+            emit OUT_10(state[0]);
+            await 100ms;
+        end
+
+        if flag then
+            l = j;
+            loop k in [0->3] do
+                if l%2==0 then
+                    state[k] = true;
+                else
+                    state[k] = false;
+                end
+                l = l/2;
+            end
+
+            if j==0 then
+                emit OUT_9(low);
+                emit OUT_8(low);
+                emit OUT_7(low);
+                emit OUT_6(low);
+                await 100ms;
+            else
+                emit OUT_9(state[3]);
+                emit OUT_8(state[2]);
+                emit OUT_7(state[1]);
+                emit OUT_6(state[0]);
+                await 100ms;
+            end
+
+        end
+    end
+end
