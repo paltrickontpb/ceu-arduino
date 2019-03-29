@@ -22,15 +22,9 @@ Hence the output will be 00101001.
 
 ### Task 3 : Create a simple example in C that uses interrupt-driven analog reads
 
-![Dice](dice.png)
+![ADXL](adxl.png)
 
-The example written in C is an Electronic dice built around a SW2000 Tilt Sensor (with only ON and OFF). When we shake the dice, the SW2000 will send RISING pulse to arduino and will generate a random number. It is connected directly to INT0 (digital Pin 2). It also has an option to choose multiple dice modes:  
-
-Mode 0 : Regular Die with output varying from 1 to 6  
-Mode 1 : 2 Regular dice with outputs from (1,1) to (6,6) having 36 outputs  
-Mode 2 : Randomly Generate a letter between T,D and S. (For party games like Truth/Dare/Situation)  
-
-The Mode can be changed using a button attached to INT1 (digital pin 3). And LCD Screen is attached to show the output of each mode and dice output.
+The example written in C is a simple example of interfacing the ADXL33x series of Gyro-Sensor. The sensor contains 3 analog output pins, which are interfaced to analog pins A0,A1 and A2, and the values are constantly being read in a loop. The analog pins are selected by setting the last 4 bits of the ADMUX register to 0000, 0001 and 0010. By changing the value of ADMUX Lower 4 bits, we can work with other Analog input channels.
 
 ### Task 4 : Fork Céu-Arduino project on github and commit the new examples
 

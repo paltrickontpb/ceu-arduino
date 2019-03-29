@@ -1,10 +1,14 @@
 #include "out.ceu"
 #include "wclock.ceu"
 
+event none e;
+var int k = 0;
+var int l = 0;
+var bool flag = false;
+
 var int i = 0;
 var int j = 0;
-var[4] bool state = [false,false,false,false]; // 13,12,11,10
-var bool flag = false;
+var[4] bool state = [false,false,false,false];
 
 output bool OUT_10;
 output bool OUT_11;
@@ -28,34 +32,40 @@ emit OUT_7(low);
 emit OUT_6(low);
 await 10ms;
 
+code/await StateSet (var int l, var int k) -> none do
+    var[4] bool state = [];
+    loop k in [0->3] do
+        if l%2==0 then
+            state[k] = true;
+        else
+            state[k] = false;
+        end
+        l = l/2;
+    end
+end
+
 loop do
     if _digitalRead(2) then
 
         i = i + 1;
 
-        if i==10 then
-            i = 0;
+        par/or do
+            if i==10 then
+                i = 0;
+                emit e;
+            end
+        with
+            await e;
             flag = true;
-        end
-
-        if flag then
             j = j + 1;
             if j==10 then
                 j = 0;
-                flag = false;
+                emit e;
             end
         end
 
-        var int l = i;
-        var int k;
-        loop k in [0->3] do
-            if l%2==0 then
-                state[k] = true;
-            else
-                state[k] = false;
-            end
-            l = l/2;
-        end
+        l = i;
+        await StateSet(l,k);
 
         if i==0 then
             emit OUT_13(low);
@@ -73,14 +83,7 @@ loop do
 
         if flag then
             l = j;
-            loop k in [0->3] do
-                if l%2==0 then
-                    state[k] = true;
-                else
-                    state[k] = false;
-                end
-                l = l/2;
-            end
+            await StateSet(l,k);
 
             if j==0 then
                 emit OUT_9(low);
